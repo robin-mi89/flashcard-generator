@@ -1,0 +1,4 @@
+clozecard	George Washington was the first president of the United States.	George Washington
+flashcard	Who wrote this program?	Robin
+clozecard	Abraham Lincoln wrote the Emancipation Proclamation	Abraham Lincoln
+flashcard	What is the name of the new star wars movie to be released in 2017?	the last jedi
