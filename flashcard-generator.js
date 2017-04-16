@@ -57,34 +57,6 @@ class ClozeCard
     }
 }
 
-// var firstPresident = new BasicCard(
-//     "Who was the first president of the United States?", "George Washington");
-
-// // "Who was the first president of the United States?"
-// console.log(firstPresident.front); 
-
-// // "George Washington"
-// console.log(firstPresident.back); 
-
-//  var firstPresidentCloze = new ClozeCard(
-//     "George Washington was the first president of the United States.", "George Washington");
-
-// console.log("Using Cloze, cloze, partial, then full");
-// // "George Washington"
-// console.log(firstPresidentCloze.cloze); 
-
-// " ... was the first president of the United States.
-//console.log(firstPresidentCloze.getPartial()); 
-
-// // "George Washington was the first president of the United States.
-// console.log(firstPresidentCloze.getFull());
-// saveCard(firstPresidentCloze);
-// saveCard(firstPresident);
-// // Should throw or log an error because "oops" doesn't appear in "This doesn't work"
-// console.log("Now creating a new cloze with a cloze that doesn't appear in the card");
-// var brokenCloze = new ClozeCard("This doesn't work", "oops"); 
-// brokenCloze.getPartial();
-
 var allFlashCards = [];
 var allClozeCards = [];
 
@@ -141,11 +113,25 @@ function saveCard(card)
 {
     if (card instanceof BasicCard)
     {
-        var toWrite = "\nflashcard\t"+card.front + "\t"+card.back;
+        if (allClozeCards.length === 0 && allFlashCards.length === 0) //first entry into the log file.
+        {
+            var toWrite = "flashcard\t"+card.front + "\t"+card.back;
+        }
+        else
+        {
+            var toWrite = "\nflashcard\t"+card.front + "\t"+card.back;
+        }
     }
     else if (card instanceof ClozeCard)
     {
-        var toWrite = "\nclozecard\t"+card.text + "\t"+card.cloze;
+        if (allClozeCards.length === 0 && allFlashCards.length === 0)
+        {
+            var toWrite = "clozecard\t"+card.text + "\t"+card.cloze;
+        }
+        else
+        {
+            var toWrite = "\nclozecard\t"+card.text + "\t"+card.cloze;
+        }
     }
     else
     {

@@ -2,3 +2,7 @@ clozecard	George Washington was the first president of the United States.	George
 flashcard	Who wrote this program?	Robin
 clozecard	Abraham Lincoln wrote the Emancipation Proclamation	Abraham Lincoln
 flashcard	What is the name of the new star wars movie to be released in 2017?	the last jedi
+clozecard	select is a sql function that returns data from the database	select
+clozecard	array.slice() cuts an array and returns the array elements after the parameter	slice()
+flashcard	Who created a theory of psychology based on the ID, EGO and SUPEREGO?	Freud
+clozecard	$ is the selector for jquery	jquery
