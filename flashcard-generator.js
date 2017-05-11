@@ -1,6 +1,7 @@
 var fs = require("fs");
 var inquirer = require("inquirer");
 
+// nice thought to use es6 classes
 class BasicCard 
 {
     constructor(front, back)
@@ -12,6 +13,7 @@ class BasicCard
         }
         else
         {
+            // nice job of not implementing this conditional to make the `new` keyword unnecessary.
             return new BasicCard(front, back);
         }
     }
@@ -22,8 +24,10 @@ class ClozeCard
     constructor(text, cloze)
     {
         if(this instanceof ClozeCard)
+            // personal preference here, but it'd be ncie to indent everything inside of the if block
+            // so that it's easier to parse through and see what all logic is contained within it
         {
-        this.text = text,   
+        this.text = text, // I'm not sure what these commas are here for, but you don't need them
         this.cloze = cloze,
         this.getCloze = function()
         {
@@ -78,41 +82,47 @@ function printAllCards()
 
 
 function loadCards()
-{
-    fs.readFile("savedCards.txt", "utf8", function(err, data) //readFile arguments: 1. file name, 2. file encoding, 3. callback function. 
-    {
-        if (err)
+{   
+    return new Promise(function(resolve, reject) {
+
+        fs.readFile("savedCards.txt", "utf8", function(err, data) //readFile arguments: 1. file name, 2. file encoding, 3. callback function. 
         {
-            console.log(err);
-            return;
-        }
-        // console.log(data);
-        var cards = data.split("\n");
-        //console.log(cards);
-        cards.forEach(function(value)
-        {
-            //console.log(value);
-            var properties = value.split("\t");
-            //console.log(properties);
-            if (properties[0] === "flashcard")
+            if (err)
             {
-                var tempCard = new BasicCard(properties[1], properties[2]);
-                allFlashCards.push(tempCard); 
+                console.log(err);
+                reject(err)
+                return;
             }
-            else
+            // console.log(data);
+            var cards = data.split("\n");
+            //console.log(cards);
+            cards.forEach(function(value)
             {
-                var tempCard = new ClozeCard(properties[1], properties[2]);
-                allClozeCards.push(tempCard);
-            }
+                //console.log(value);
+                var properties = value.split("\t");
+                //console.log(properties);
+                if (properties[0] === "flashcard")
+                {
+                    var tempCard = new BasicCard(properties[1], properties[2]);
+                    allFlashCards.push(tempCard); 
+                }
+                else
+                {
+                    var tempCard = new ClozeCard(properties[1], properties[2]);
+                    allClozeCards.push(tempCard);
+                }
+            });
+            resolve('success')
+            //printAllCards();
         });
-        //printAllCards();
-    });
+    })
 }
 
 function saveCard(card)
 {
     if (card instanceof BasicCard)
     {
+        // you could save yourself the need for this conditional by simply appending the new line character to the end of the string as opposed to prepending it for all bu the first line
         if (allClozeCards.length === 0 && allFlashCards.length === 0) //first entry into the log file.
         {
             var toWrite = "flashcard\t"+card.front + "\t"+card.back;
@@ -153,34 +163,47 @@ start();
 
 function start()
 {
-    loadCards();
+    // unlikely ever to prove an issue in this scenario since the user is likely to read their options before selecting one
+    // and in that time all the cards should have finished loading, but there's no guarantee that would happen. And if you
+    // hit enter immediately after running this file, then you'll crash your program because the logic in `readCard` depends
+    // on the cards already being loaded. Couple ways around this:
+        // pass a callback function to `loadCards` that encapsulates the rest of the logic in this function
+        // have `loadCards` return a promise and then run the rest of the logic in this function after that promise resolves (this is the option that I've implemented as an example)
+    loadCards()
+        .then(function(result) {
 
-    inquirer.prompt([
-    {
-        type: "list", 
-        name: "task",
-        message: "Do you want to read or write a flashcard/clozecard?",
-        choices: ["read", "write flashcard", "write clozecard", "exit"]
-    }
-    ]).then(function(result)
-    {
-        if (result.task === "read")
-        {
-            readCard();
-        }
-        else if (result.task ==="write flashcard")
-        {
-            writeFlashCard();
-        }
-        else if (result.task === "write clozecard")
-        {
-            writeClozeCard();
-        }
-        else
-        {
-            return;
-        }
-    })
+            inquirer.prompt([
+            {
+                type: "list", 
+                name: "task",
+                message: "Do you want to read or write a flashcard/clozecard?",
+                choices: ["read", "write flashcard", "write clozecard", "exit"]
+            }
+            ]).then(function(result)
+            {
+                if (result.task === "read")
+                {
+                    readCard();
+                }
+                else if (result.task ==="write flashcard")
+                {
+                    writeFlashCard();
+                }
+                else if (result.task === "write clozecard")
+                {
+                    writeClozeCard();
+                }
+                else
+                {
+                    return;
+                }
+            })
+
+        })
+        .catch(function(err) {
+            console.log('Oh noes!')
+            console.log(err)
+        })
 }
 
 function writeFlashCard()
